@@ -1,0 +1,117 @@
+﻿@model IEnumerable<Best_Power_Shoes_ver_1._0.Models.weekly_report>
+@{
+    Layout = null;
+    WebGrid grid = new WebGrid(Model);
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+
+    <link href="~/Content/css/style.css" rel="stylesheet" />
+
+    <title>Stock In Danger Report</title>
+    <script src="~/Scripts/jquery-1.10.2.min.js"></script>
+    <script>
+        $(document).ready(function () {
+
+            $('#cancel_button').click(function () { location.reload(); });
+        });
+
+    </script>
+            <style type="text/css">
+                .grid {
+                margin: 4px;
+                    border-collapse: collapse;
+                    width: 600px;
+                }
+
+            .grid th, .grid td {
+                border: 1px solid #C0C0C0;
+                padding: 5px;
+            }
+
+            .head {
+                background-color: #E8E8E8;
+                font-weight: bold;
+                color: #FFF;
+            }
+
+            .alt {
+                background-color: #E8E8E8;
+                color: #000;
+            }
+            </style>
+
+        </head>
+        <body>
+            <div class="backarrow">
+            @Html.ActionLink("BACK TO HOME PAGE", "Index", "Home")
+            </div>
+            <div class="working">
+                <div class="input_container">
+            @using (Html.BeginForm("WeeklyReport", "Home", FormMethod.Post, new { @class = "", role = "form" }))
+            {
+                <h2>Weekly Report</h2>
+                <hr />
+                <div class="form-wrapper">
+                    <!--form control 1-->
+                    <div class="form-group-1">
+            @Html.Label("Date Begin", new { @class = "label-control-1" })
+                        <div class="form-control-1">
+                            <input type="date" name="datebegin" />
+                        </div>
+                    </div><!--end of date begin-->
+                    <!--end of container-->
+                    <!--form control 1-->
+                    <div class="form-group-1">
+            @Html.Label("Date End", new { @class = "label-control-1" })
+                        <div class="form-control-1">
+                            <input type="date" name="enddate" />
+                        </div>
+                    </div><!--end of date end-->
+                    <!--end of container-->
+                    <!--Buttons-->
+                    <div class="form-group-1">
+                        <div style="width:100%; height:20px;">
+                        </div>
+                        <div class="form-control-1">
+                            <a href=""><input type="submit" value="Search" class="btn btn-primary" /></a>
+                            <a href=""><input type="button" value="Cancel" id="cancel_button" class="btn" /></a>
+                        </div>
+                    </div><!--end of buttons-->
+
+                </div>
+            }
+
+        </div>
+
+
+        <div class="bill_detail" style="background-color:white;width:63%; margin-left:14%;">
+
+            @grid.GetHtml(
+             tableStyle: "grid",
+             headerStyle: "head",
+             alternatingRowStyle: "alt",
+               columns: new[]{
+                 grid.Column("Total_Amount"),
+                 grid.Column("Total_Items"),
+                 grid.Column("payment"),
+                 grid.Column("Pending_Payment"),
+                 grid.Column("Claim"),
+
+
+
+                })
+
+
+        </div>
+
+
+
+    </div><!--end of working container-->
+
+</body>
+</html>

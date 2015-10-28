@@ -1,0 +1,317 @@
+body{
+	margin:0px;
+	padding:0px;
+	font-family:calibri, Helvetica, sans-serif;
+}
+h2 {
+margin-left:10px;
+}
+
+.working{
+	width:76%;
+	margin:0px auto;
+}
+.bold {
+    font-weight:bold;
+}
+.red{background-color:red;color:white;}
+
+/********************** START SALE PAGE STYLES **************************/
+.backarrow{
+	float:left;
+	width:12%;
+	height:60px;
+    margin-top:10px;
+    padding-left:10px;
+	}
+.new-button-container{
+	width:12%;
+	height:60px;
+	position:fixed;
+	bottom:10px;
+	left:0px;
+}
+.input_container{
+    background-color: #e4e4e4;
+    width: 61%;
+    border: solid 1px #4DB84D;
+    height: 350px;
+    float: left;
+    margin-left: 14%;
+   
+}
+.bill_detail{
+	float:left;
+	width:100%;
+	height:auto;
+	background-color:black;
+	border:solid 1px black;
+}
+.total-sale-portion{
+width:12%;
+height:60px;
+position:fixed;
+bottom:10px;
+right:0px;
+
+}
+.sale-stock{
+    width: 23%;
+    border: solid 1px black;
+    position: relative;
+    float: left;
+    top: 5px;
+    left: 5%;
+    background-color: #ded9d9;
+
+
+}
+.clearFloat{
+    clear:both;
+}
+/******* Form Controls   */
+.form-wrapper {
+width:550px;
+height:100%;
+margin:auto;
+}
+.form-group-1{
+    float:left;
+    position:relative;
+    width:225px;
+    height:55px;
+    margin:10px 0px 0px 35px;
+}
+.label-control-1{
+    float:left;
+    position:relative;
+    width:100%;
+    height:20px;
+    font-size:17px;
+}
+.form-control-1{
+    float:left;
+    position:relative;
+    width:100%;
+    height:30px;
+    margin:5px 0px 0px 0px;
+}
+/** input controls*/
+input[type="text"] {width: 220px; height: 30px; border-radius: 3px;}
+input[type="number"] {width: 220px; height: 30px; border-radius: 3px;}
+.btn{width: 110px; height:30px; border-radius: 3px;}
+.btn-primary {background-color:#4DB84D;color:white;}
+.btn-lg {width:90%; height: 50px; border-radius: 3px; background-color: #4DB84D; color: white;margin:10px 5px 0px 0px; float:right;}
+
+
+/* Data Grid Styles*/
+/****************Common Data Grid Style******************/
+
+.dgSec1{
+    margin-top:5px;
+    margin-bottom:5px;
+}
+
+.dgCaption1{
+    padding: 5px;
+    background-color:black;
+    color:#ffffff;
+}
+
+.dgHeaderRow1 , .dgFooterRow{
+    margin-top:1px;
+    background-color:white;
+    color:black;
+}
+
+
+.dgDataRowNormal1{
+    margin-top:1px;
+    background-color:white;
+}
+
+.dgDataRowNormal1:hover{
+		   background-color:#4DB84D;
+		   color:white;
+}
+.dgDataRowNormal1:hover a{
+	color:white;
+}
+.dgDataRowAlternate1{
+    margin-top:1px;
+    background-color:white;
+    }
+.dgDataRowAlternate1:hover{
+   background-color:#4DB84D;
+   color:white;
+}
+.dgDataRowAlternate1:hover a{
+    color:white;
+}
+
+
+
+
+.dgDataRowHeighlighted1{
+    background-color: #ff6a00;
+    color:#ffffff;
+}
+
+.dgCreateLink{
+    color:#ffffff;
+}
+
+.dgDetailsLink{
+
+}
+
+.dgEditLink{
+
+}
+
+.dgDeleteLink{
+
+}
+
+
+/****************Manage Products Data Grid Style******************/
+
+.mpgIconCol1{
+    padding: 5px;
+    width:6%;
+    height: 20px;
+    float:left;
+    text-align:center;
+    border-right:solid 1px black;
+}
+
+.mpgIcon1{
+    width: 20px;
+    height: 20px;
+}
+
+
+.mpgNameCol{
+    padding: 5px;
+    width: 16%;
+    height: 20px;
+    float:left;
+    text-align:center;
+    border-right:solid 1px black;
+}
+.mpgNumberCol{
+    padding: 5px;
+    width: 10%;
+    height: 20px;
+    float:left;
+    text-align:center;
+    border-right:solid 1px black;
+}
+
+
+.mpgItemRateCol{
+    padding: 5px;
+    width: 10%;
+    height: 20px;
+    float:left;
+    text-align:center;
+    border-right:solid 1px black;
+}
+.mpgQtyCol{
+    padding: 5px;
+    width: 10%;
+    height: 20px;
+    float:left;
+    text-align:center;
+    border-right:solid 1px black;
+}
+
+.mpgAmountCol{
+    padding: 5px;
+    width: 16%;
+    height: 20px;
+    float:left;
+    text-align:center;
+    border-right:solid 1px black;
+}
+
+.mpgDiscountCol{
+    padding: 5px;
+    width: 10%;
+    height: 20px;
+    float:left;
+    text-align:center;
+    border-right:solid 1px black;
+}
+.mpgActionsCol1{
+    padding: 5px;
+    height: 23%;
+    float:left;
+}
+
+/*End of data grid view styles*/
+
+/**    sales hover show effect   */
+.sale_inner {
+    width:140px;
+    height:110px;
+    font-size:15px;
+    background-color:black;
+    color:#aca7a7;
+    position:fixed;
+    top:50px;
+    left:230px;
+    z-index:1111;
+}
+.sale_inner ul , .report_inner ul{
+        padding:0px;
+        list-style:none;
+    }
+.sale_inner ul li , .report_inner ul li {
+        margin:3px;
+        cursor:auto;
+            }
+.sale_inner ul li a:hover , .report_inner ul li a:hover{
+          color:white;   
+        }
+
+.sale_inner ul li a , .report_inner ul li a{
+    text-decoration:none;
+   color:#aca7a7;
+}
+/*reports inner*/
+.report_inner {
+     width:170px;
+    height:110px;
+    font-size:15px;
+    background-color:black;
+    color:#aca7a7;
+    position:fixed;
+    top:50px;
+    left:520px;
+    z-index:1111;
+}
+/*end of inner hover effect*/
+
+
+.login{
+	background-color:purple;
+	height:500px;
+	width:287px;
+	float:left;
+	margin:55px 0px 0px 35px;
+}/*End of login*/
+.blank{
+	background-color:gray;
+	margin-top:90px;
+	height:30px;
+	width:100%;
+}
+.info{
+	background-color:yellow;
+	float:left;
+	margin-top:100px;
+	height:700px;
+	width:700px;
+}/*End of about and all pages :P*/
+

@@ -1,0 +1,65 @@
+﻿@model IEnumerable<Best_Power_Shoes_ver_1._0.Models.stock>
+
+@{
+    Layout = null;
+    WebGrid grid = new WebGrid(Model);
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+
+    <link href="~/Content/css/style.css" rel="stylesheet" />
+
+    <title>Stock In Danger Report</title>
+
+   <style type="text/css" > 
+       .grid {
+            margin: 4px;
+            border-collapse: collapse;
+            width: 600px;
+        }
+
+        .grid th, .grid td {
+            border: 1px solid #C0C0C0;
+            padding: 5px;
+        }
+
+        .head {
+            background-color: #E8E8E8;
+            font-weight: bold;
+            color: #FFF;
+        }
+
+        .alt {
+            background-color: #E8E8E8;
+            color: #000;
+        }
+    </style>      
+
+</head>
+<body>
+    <div class="backarrow">
+        @Html.ActionLink("BACK TO HOME PAGE", "Index", "Home")
+    </div>
+    <div class="working">
+        <h2>Stock In Danger List</h2>
+        <div class="bill_detail" style="background-color:white;width:58.5%;">
+            
+            @grid.GetHtml(
+             tableStyle: "grid",
+             headerStyle: "head",
+             alternatingRowStyle: "alt", 
+               columns: new[]{
+                 grid.Column("artical_no"),
+                 grid.Column("artical_name"),
+                 grid.Column("color"),
+                 grid.Column("qty"),
+                })
+        
+            </div>
+        </div>
+</body>
+</html>

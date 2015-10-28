@@ -1,0 +1,366 @@
+﻿@model Best_Power_Shoes_ver_1._0.Models.Sale_Details
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <link href="~/Content/jquery-ui.css" rel="stylesheet" />
+    <link href="~/Content/css/style.css" rel="stylesheet" type="text/css" media="all" />
+
+    <title>Sale Point</title>
+    <script src="~/Scripts/jquery-1.10.2.min.js"></script>
+    <script src="~/Scripts/jquery-ui.js"></script>
+
+    <script>
+        $(document).ready(function () {
+
+            /*For Customer Name Auto Complete*/
+            $('.auto_cname').autocomplete({
+               source: function (request, response) {
+                $.ajax({
+                    url: "/Customer/AutoGetCustomerName",
+                    type: "POST",
+                    dataType: "json",
+                    data: { term: request.term },
+                    success: function (data) {
+                        response($.map(data, function (item) {
+
+                            return { label: item, value: item };
+                        }))
+
+                    }
+                })
+            },
+            messages: {
+                noResults: "Not Found", results: "Found"
+            }
+             });
+            $('#input_cname').blur(function () { $("#input_cname").prop("readonly", true); });
+
+            $('#print_btn').click(function () {
+
+                $('#da').printMe({ "path":"/Content/css/style.css", "title": "Arsalan Awan" });
+            });
+            /*For Sale_Bill AJAX*/
+            $("#enter").click(function (event) {
+                var cus_name = $('#input_cname').val();
+                $('#cname').html(cus_name);
+
+                event.preventDefault();
+                $.ajax({
+                    type: "POST",
+                    contentType: "application/json; charset=utf-8",
+                    url:"@Url.Action("Sale_Return_Detail", "Home")",
+                    data: "{'funcParam':'" + $('#from_data').serialize() + "'}",
+                    datatype: "json",
+                    success:
+                        function (data) { loaddata(data); },
+                    error:
+                        function () { alert("Failed"); }
+                });
+
+            });
+
+            $('#artical_name').blur(function () {
+                event.preventDefault();
+                $.ajax({
+                    type: "POST",
+                    contentType: "application/json; charset=utf-8",
+                    url: "@Url.Action("Stock", "Home")",
+                    data: "{'articals':'" + $('#from_data').serialize() + "'}",
+                    datatype: "json",
+                    success:
+                     function (data) { loadstockdata(data); },
+                    error:
+                    function () { alert("Failed"); }
+                });
+            });
+            /*Load Data for stock*/
+            function loadstockdata(data) {
+                var table = $('<table></table>');
+                var thead = $('<thead></thead>');
+                thead.append('<th>Artical</th>');
+                thead.append('<th>Artical Name</th>');
+                thead.append('<th>Color</th>');
+                thead.append('<th>Qty</th>');
+                table.append(thead);
+
+                $.each(data, function (i, val) {
+                    var trow = $('<tr></tr>');
+                    trow.append('<td>' + val.Artical_No + '</td>');
+                    trow.append('<td>' + val.Artical_Name + '</td>');
+                    trow.append('<td>' + val.Color + '</td>');
+                    trow.append('<td>' + val.Qty + '</td>');
+                    table.append(trow);
+                });
+
+                $("#sale-stock1").html(table);
+            }
+            /*Load Data For Sale Details*/
+            function loaddata(data) {
+                var row_rapper = "<div class='dgDataRowAlternate1'>";
+
+                $.each(data, function (i, val) {
+
+                    if (val.Msg != null) {
+                        alert("Error:" + val.Msg)
+                    }
+                    else {
+                        row_rapper += "<div class='mpgIconCol1'>" + val.Counter + "</div>";
+                        row_rapper += "<div class='mpgNameCol' id='art_name'>" + val.Artical_Name + "</div>";
+                        row_rapper += "<div class='mpgNumberCol' id='art'>" + val.Artical_No + "</div>";
+                        row_rapper += "<div class='mpgQtyCol'>" + val.Qty + "</div>";
+                        row_rapper += "<div class='mpgItemRateCol'>" + val.Pair_Rate + "</div>";
+                        row_rapper += "<div class='mpgDiscountCol'>" + val.Pair_Disc + "</div>";
+                        row_rapper += "<div class='mpgAmountCol'>" + val.Amount + "</div>";
+                        row_rapper += "<div class='mpgActionsCol1'>";
+                        row_rapper += '@Html.ActionLink("Delete", "delete", "Home", new { @class = "dgDetailsLink" })';
+                        row_rapper += "&nbsp;&nbsp;&nbsp;&nbsp;";
+
+                        row_rapper += '@Html.ActionLink("Edit", "edit", "Home", new { Name ="ArticleNo" },
+                                                    new { @class = "dgEditLink" })'.replace("ArticleNo", val.Artical_No);
+
+                        row_rapper += "</div>";
+                        row_rapper += " <div class='clearFloat'></div>";
+                        row_rapper += "</div>";
+
+                        /*for footer*/
+                        $('#totalqty').html(val.Total_Qty);
+                        $('#totalamount').html(val.Total_Amount);
+                    }
+                });
+
+                $("#test_div").append(row_rapper);
+                $('#artical_no').val("");
+                $('#artical_name').val("");
+                $('#qty').val("");
+                $('#artical_no').focus();
+
+            }
+            /*for auto artical name get*/
+            $('#artical_no').blur(function (event) {
+                event.preventDefault();
+                $.ajax({
+                    type: "POST",
+                    contentType: "application/json; charset=utf-8",
+                    url: "@Url.Action("articalNamesListByArticalNo", "Article")",
+                    data: "{'artical':'" + $('#artical_no').val() + "'}",
+                    datatype: "json",
+                    success:
+                        function (data) {
+                            $("#artical_name option").remove();
+                            $.each(data, function (i, dat) {
+                                $('#artical_name').append($('<option>', {
+                                    value: dat,
+                                    text: dat
+                                }));
+                            });
+                        },
+                    error:
+                        function () { alert("Failed"); }
+
+                });
+            });
+            /*for auto get color in options*/
+            $('#artical_name').blur(function (event) {
+                event.preventDefault();
+                $.ajax({
+                    type: "POST",
+                    contentType: "application/json; charset=utf-8",
+                    url: "@Url.Action("articalColorListByArticalNo", "Article")",
+                    data: "{'artical':'" + $('#artical_no').val() + "' ,'articalname':'" +  $('#artical_name :selected').text()+ "' }",
+                datatype: "json",
+                success:
+                function (data) {
+                    $("#color option").remove();
+                    $.each(data, function (i, dat) {
+                        $('#color').append($('<option>', {
+                            value: dat,
+                            text: dat
+                        }));
+                    });
+                },
+                error:
+                function () { alert("Failed"); }
+
+            });
+        });
+        });
+    </script>
+</head>
+<body>
+    <div class="backarrow">
+        @Html.ActionLink("BACK TO HOME PAGE", "Index", "Home")
+    </div>
+    <div class="working">
+        <div class="input_container">
+            @using (Html.BeginForm("", "", FormMethod.Post, new { @Id = "from_data", @class = "", role = "form" }))
+            {
+                <h2>Sale Return Panel</h2>
+                <hr />
+                <div class="form-wrapper">
+                    <!--form control 1-->
+                    <div class="form-group-1">
+                        @Html.Label("Invoice Number", new { @class = "label-control-1" })
+                        <div class="form-control-1">
+
+                            <input type="number" name="Invoice_No" id="invoice" value="0"/>
+                        </div>
+                    </div><!--end of invoice number-->
+                    <!--end of container-->
+                    <!--form control 1-->
+                    <div class="form-group-1">
+                        @Html.Label("Customer Name", new { @class = "label-control-1" })
+                        <div class="form-control-1">
+                            <input type="text" id="input_cname" class="auto_cname" name="Cus_Name" />
+                        </div>
+                    </div><!--end of customer name-->
+                    <!--end of container-->
+                    <!--form control 1-->
+                    <div class="form-group-1">
+                        @Html.Label("Artical Number", new { @class = "label-control-1" })
+                        <div class="form-control-1">
+                            <input type="number" id="artical_no" name="Artical_No" required />
+                        </div>
+                    </div><!--end of artical number-->
+                    <!--end of container-->
+                    <!--form control 1-->
+                    <div class="form-group-1">
+                        @Html.Label("Artical Name", new { @class = "label-control-1" })
+                        <div class="form-control-1">
+                            <select id="artical_name" name="Artical_Name" style="width:100%; height:100%;"></select>
+
+                        </div>
+                    </div><!--end of artical name-->
+                    <!--end of container-->
+                    <!--form control 1-->
+                    <div class="form-group-1">
+                        @Html.Label("Qty", new { @class = "label-control-1" })
+                        <div class="form-control-1">
+                            <input type="number" id="qty" name="Qty" required />
+                        </div>
+                    </div><!--end of QTY-->
+                    <!--end of container-->
+                    <!--form control 1-->
+                    <div class="form-group-1">
+                        @Html.Label("Color", new { @class = "label-control-1" })
+                        <div class="form-control-1">
+                            <select name="Color" id="color" style="width:100%; height:100%;"></select>
+
+                        </div>
+                    </div><!--end of Color-->
+                    <!--end of container-->
+                    <!--Buttons-->
+                    <div class="form-group-1">
+                        <div style="width:100%; height:20px;">
+                        </div>
+                        <div class="form-control-1">
+                            <a href="/Home/Sale_Detail/" id="enter"><input type="button" class="btn btn-primary" value="Enter" /></a>
+                            <a href="#"><input type="button" class="btn" value="Cancel" /></a>
+                        </div>
+                    </div><!--end of buttons-->
+
+                </div>
+            }
+
+        </div>
+
+        <div class="sale-stock" id="sale-stock1">
+
+        </div>
+
+        <div id="da">
+            <div class="bill_detail">
+                <!--Bill Header With Bill Number-->
+                <div class="dgHeaderRow1 bold" style="background-color: white; height: 25px; margin-top: 1px; background-color: white; color: black;">
+                    <div style="text-align: right;">Bill No: @ViewBag.invoice_no &nbsp;&nbsp;&nbsp;&nbsp;</div>
+                    <p style="margin-top:-15px;">&nbsp;&nbsp;&nbsp;&nbsp;Date:    @DateTime.Now</p>
+                </div>
+
+                <!--Bill Header With Customer Name-->
+                <div class="dgHeaderRow1" id="cname" style="text-align:center;font-size:28px; height:40px">
+
+                </div>
+
+                <!--Data Grid Header-->
+                <div class="dgHeaderRow1">
+                    <div class="mpgIconCol1 bold">
+                        sr
+                    </div>
+                    <div class="mpgNameCol bold">
+                        Artical Name
+                    </div>
+                    <div class="mpgNumberCol bold">
+                        Artical No
+                    </div>
+                    <div class="mpgQtyCol bold">
+                        Qty
+                    </div>
+                    <div class="mpgItemRateCol bold">
+                        Pair Rate
+                    </div>
+                    <div class="mpgDiscountCol bold">
+                        Pair Discount
+                    </div>
+                    <div class="mpgAmountCol bold">
+                        Amount
+                    </div>
+                    <div class="mpgActionsCol1 bold">
+                        Actions
+                    </div>
+                    <div class="clearFloat"></div>
+                </div>
+
+                <div id="test_div"></div>
+
+
+
+                <!--**************************  Data Grid Footer Row *****************-->
+                <div class="dgFooterRow">
+                    <div class="mpgIconCol1">
+
+                    </div>
+                    <div class="mpgNameCol">
+
+                    </div>
+                    <div class="mpgNumberCol bold">
+                        TOTAL
+                    </div>
+                    <div class="mpgQtyCol bold" id="totalqty">
+
+                    </div>
+                    <div class="mpgItemRateCol">
+
+                    </div>
+                    <div class="mpgDiscountCol">
+
+                    </div>
+                    <div class="mpgAmountCol bold" id="totalamount" style="background-color:black; color:white;">
+
+                    </div>
+                    <div class="mpgActionsCol1">
+
+                    </div>
+                    <div class="clearFloat"></div>
+                </div><!--end of data grid footer row  -->
+
+
+
+            </div><!--end of bill details row-->
+
+        </div>
+
+    </div><!--end of working container-->
+
+    <div class="total-sale-portion">
+        <a href=""><input type="button" value="DONE !" id="print_btn" class="btn-lg" /></a>
+    </div><!--end of Done! button-->
+    <div class="new-button-container">
+        <a href=""><input type="button" value="NEW !" class="btn-lg" style="background-color:#7665e8;" /></a>
+    </div><!--end of new button-->
+</body>
+</html>

@@ -1,0 +1,151 @@
+﻿@model IEnumerable<Best_Power_Shoes_ver_1._0.Models.Sale_Details>
+
+@{
+    var sdddd = Model;
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <link href="~/Content/jquery-ui.css" rel="stylesheet" />
+    <link href="~/Content/css/style.css" rel="stylesheet" type="text/css" media="all" />
+
+    <title>Sale Bill</title>
+    <script src="~/Scripts/jquery-1.10.2.min.js"></script>
+    <script src="~/Scripts/jquery-ui.js"></script>
+    <script src="~/Scripts/jquery-printme.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () { 
+            $("#btn").click(function () {
+                //$('#da').print();
+                //$('#da').printMe({"path":"/Content/css/style.css"});
+                PrintPage();
+            });
+        function PrintPage() {
+            var printContent = document.getElementById('#da');
+            var printWindow = window.open("All Records", "Print Panel", 'left=50000,top=50000,width=0,height=0');
+            printWindow.document.write("<h1 style='text-align:center; color:black; font-size:larger'>Visitors Details</h1>");
+            printWindow.document.write("<br/>");
+            printWindow.document.write(printContent.outerHTML);
+            printWindow.document.close();
+            printWindow.focus();
+            printWindow.print();
+        }
+        });
+    </script>
+
+</head>
+<body>
+    <div id="da" style="width:500px;">
+        <div class="bill_detail">
+            <!--Bill Header With Bill Number-->
+            <div class="dgHeaderRow1 bold" style="background-color: white; height: 25px; margin-top: 1px; background-color: white; color: black;">
+                <div style="text-align: right;">Bill No: @ViewBag.invoice_no &nbsp;&nbsp;&nbsp;&nbsp;</div>
+                <p style="margin-top:-15px;">&nbsp;&nbsp;&nbsp;&nbsp;Date:   @ViewBag.date</p>
+            </div>
+             
+            <!--Bill Header With Customer Name-->
+            <div class="dgHeaderRow1" id="cname" style="text-align:center;font-size:28px; height:40px">
+                @ViewBag.cname
+            </div>
+
+            <!--Data Grid Header-->
+            <div class="dgHeaderRow1" style="height:41px;color:white; background-color:black;margin:0px;">
+                <div class="mpgIconCol1 bold" style="height:35px;">
+                    sr
+                </div>
+                <div class="mpgNameCol bold" style="width: 83px; height: 35px;">
+                    Artical Name
+                </div>
+                <div class="mpgNameCol bold" style="height:35px;">
+                    Artical No
+                </div>
+                <div class="mpgQtyCol bold" style="height:35px;">
+                    Qty
+                </div>
+                <div class="mpgItemRateCol bold" style="height:35px;">
+                    Pair Rate
+                </div>
+                <div class="mpgDiscountCol bold" style="height:35px;">
+                    Pair Disc.
+                </div>
+                <div class="mpgAmountCol bold" style="height:35px; border-right:none;">
+                    Amount
+                </div>
+                <div class="clearFloat"></div>
+            </div>
+            
+            <!--for data rows-->
+                @foreach (var i in sdddd)
+{
+
+    if (i.Msg == "ok")
+    {
+        <div class="dgDataRowAlternate1" style="height:auto;">
+            <div class="mpgIconCol1" style="height:auto;">
+                @i.Counter
+            </div>
+            <div class="mpgNameCol" style="width: 83px; height:auto;">
+                @i.Artical_Name
+            </div>
+            <div class="mpgNameCol" style="height:auto;">
+                @i.Artical_No
+            </div>
+            <div class="mpgQtyCol" style="height:auto;">
+                @i.Qty
+            </div>
+            <div class="mpgItemRateCol" style="height:auto;">
+                @i.Pair_Rate
+            </div>
+            <div class="mpgDiscountCol" style="height:auto;">
+                @i.Pair_Disc
+            </div>
+            <div class="mpgAmountCol" style="height:auto; border-right: none;">
+                @i.Amount
+            </div>
+            <div class="clearFloat"></div>
+        </div>
+    }
+
+}
+
+            <!--**************************  Data Grid Footer Row *****************-->
+            <div class="dgFooterRow">
+                <div class="mpgIconCol1 bold">
+                   
+                </div>
+                <div class="mpgNameCol bold" style="width:83px;">
+                   
+                </div>
+                <div class="mpgNameCol bold">
+                    TOTAL
+                </div>
+                <div class="mpgQtyCol bold">
+                    @ViewBag.total_qty
+                    
+                </div>
+                <div class="mpgItemRateCol bold">
+                  
+                </div>
+                <div class="mpgDiscountCol bold">
+                   
+                </div>
+                <div class="mpgAmountCol bold" style="color:white; background-color:black;margin:0px;">
+                    @ViewBag.total_amount
+                 </div>
+                <div class="clearFloat"></div>
+
+             
+            </div><!--end of data grid footer row  -->
+
+
+
+        </div><!--end of bill details row-->
+
+    </div>
+    <input type="button" value="print" id="btn">
+</body>
+</html>

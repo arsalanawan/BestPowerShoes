@@ -1,0 +1,1315 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+<meta name="viewport" content="width=device-width" />
+<link href="~/Content/jquery-ui.css" rel="stylesheet" />
+<link href="~/Content/css/style.css" rel="stylesheet" type="text/css" media="all" />
+    <link href="~/Content/bootstrap.min.css" rel="stylesheet" />
+
+<title>Sale Point</title>
+<script src="~/Scripts/jquery-1.10.2.min.js"></script>
+    <script src="~/Scripts/bootstrap.min.js"></script>
+<script src="~/Scripts/jquery-ui.js"></script>
+
+<script>
+    $(document).ready(function () {
+
+        /*For Customer Name Auto Complete*/
+        $('#name2 ,#name3 ,#name ,#name_search').autocomplete({
+            source: function (request, response) {
+                $.ajax({
+                    url: "/Customer/AutoGetCustomerName",
+                    type: "POST",
+                    dataType: "json",
+                    data: { term: request.term },
+                    success: function (data) {
+                        response($.map(data, function (item) {
+
+                            return { label: item, value: item };
+                        }))
+
+                    }
+                })
+            },
+            messages: {
+                noResults: "Not Found", results: "Found"
+            }
+        });
+
+
+        /*for dropdown topmenu*/
+        $("#sale_inner").hide(); $("#report_inner").hide();
+        $("#sale").click(function () {
+            $("#sale_inner").slideToggle(500);
+            $("#report_inner").slideUp(500);
+        });
+        $("#report").click(function () {
+            $("#report_inner").slideToggle(500);
+            $("#sale_inner").slideUp(500);
+        });
+        /*blur calls*/
+        $('#name1').blur(function () {
+            $("#dialogSec").slideUp();
+        });
+        $('#name2').blur(function () {
+            $("#dialogSec3").slideUp();
+        });
+        $('#name3').blur(function () {
+            $("#dialogSec4").slideUp();
+        });
+        $('#name5').blur(function () {
+            $("#dialogSec1").slideUp();
+        });
+        $('#name').focusin(function () {
+            $('#pendings').val("0");
+            $('#dues').val("0");
+        });
+        $('#artnumber_for_price').focusin(function () { $('#artical_price111').val(""); });
+        $('#claim').blur(function (event) {
+            event.preventDefault();
+          
+            $.ajax({
+                type: "POST",
+                contentType: "application/json; charset=utf-8",
+                url: "/Customer/Get_Remaining_Amount/",
+                data:"{'pending_payment':'"+$('#pending_payment').val()+"','dues_payment':'"+$('#dues_payment').val()+"','claim':'"+$('#claim').val()+"','pendings':'"+$('#pendings').val()+"','dues':'"+$('#dues').val()+"'}",
+                datatype:"json",
+                success:
+                    function (data) {$('#rem').val(data.remm); },
+                error:
+                    function () { alert("Failed TO Loading Remaining Amount");}
+
+            });
+                  
+        });
+
+        /*AJAX CALLS FOR ALL INPUT CONTROLS*/
+        /*For Artical AJAX*/
+        $("#a_add,#a_edit").click(function (event) {
+            event.preventDefault();
+            var emt = $(this);
+            $.ajax(
+                {
+                    type: "POST",
+                    url: emt.attr("href"),// url: "/Customer/Add/",
+                    data: $('#formData1').serialize(),
+                    success: function (result) {
+                        $("#dialogSec1").slideDown();
+                        $("#dialogSec1").html(result);
+                        $('#name5').focus();
+
+                    }
+                });
+        });
+        /*For Artical Add In Stock AJAX*/
+        $("#a_s_add,#a_s_edit").click(function (event) {
+            event.preventDefault();
+            var emt = $(this);
+            $.ajax(
+                {
+                    type: "POST",
+                    url: emt.attr("href"),// url: "/Customer/Add/",
+                    data: $('#formData2').serialize(),
+                    success: function (result) {
+                        $("#dialogSec2").slideDown();
+                        $("#dialogSec2").html(result);
+                        $('#name6').focus();
+                    }
+                });
+        });
+        /*For Customer AJAX*/
+        $("#check,#edit").click(function (event) {
+            event.preventDefault();
+            var emt = $(this);
+            $.ajax(
+                {
+                    type: "POST",
+                    url: emt.attr("href"),// url: "/Customer/Add/",
+                    data: $('#formData').serialize(),
+                    //async: false,
+                    success: function (result) {
+                        $("#dialogSec").slideDown();
+                        $("#dialogSec").html(result);
+                        $('#name1').focus();
+                    }
+                });
+        });
+        /*For Special Customer AJAX*/
+        $("#c_special_add").click(function (event) {
+            event.preventDefault();
+            var emt = $(this);
+            $.ajax(
+                {
+                    type: "POST",
+                    url: emt.attr("href"),// url: "/Customer/Add/",
+                    data: $('#formData3').serialize(),
+                    success: function (result) {
+                        $("#dialogSec3").slideDown();
+                        $("#dialogSec3").html(result);
+                        $('#name2').focus();
+                    }
+                });
+        });
+        /*For Add Pending Amounts AJAX*/
+        $("#add_pending_amount,#edit_pending_amount").click(function (event) {
+            event.preventDefault();
+            var emt = $(this);
+            $.ajax(
+                {
+                    type: "POST",
+                    url: emt.attr("href"),// url: "/Customer/Add/",
+                    data: $('#formData4').serialize(),
+                    //async: false,
+                    success: function (result) {
+                        $("#dialogSec4").slideDown();
+                        $("#dialogSec4").html(result);
+                        $('#name3').focus();
+                    }
+                });
+        });
+        /*For Recieve Payments AJAX*/
+        $("#add_rec,#edit_rec").click(function (event) {
+            event.preventDefault();
+            var emt = $(this);
+            $.ajax(
+                {
+                    type: "POST",
+                    url: emt.attr("href"),// url: "/Customer/Add/",
+                    data: $('#formData5').serialize(),
+                    //async: false,
+                    success: function (result) {
+                        $("#dialogSec5").slideDown();
+                        $("#dialogSec5").html(result);
+                        $('#name').focus();
+                    }
+                });
+        });
+        /*for verify btn***********************************************************/
+        $("#verify_btn").click(function (event) {
+            event.preventDefault();
+            var emt = $(this);
+            $.ajax({
+                type: "POST",
+                contentType: "application/json; charset=utf-8",
+                url:"/Home/verify/", //emt.attr("href"),
+                data:"{'invoice':'"+1+"'}",
+                datatype: "json",
+                success:function (data) { alert(data.msg); },
+                error: function () { alert("Failed"); }
+            });
+        });
+        /*for show artical price*/
+        $('#artical_for_price').blur(function (event) {
+            event.preventDefault();
+            $.ajax({
+                type: "POST",
+                contentType: "application/json; charset=utf-8",
+                url: "/Customer/Get_Artical_Price/",
+                data:"{'artical_number':'"+$('#artnumber_for_price').val()+"' , 'artical_name':'"+$(this).val()+"'}",
+                datatype:"json",
+                success: function (data) {
+                    $.each(data, function (i, val) {
+                        $('#artical_price111').val(val.pair_rate);
+                    });
+                },
+                error: function () { alert("Failed"); }
+            });
+        });
+     
+        /*For show pending bills AJAX*/
+        $("#name").blur(function (event)
+        {
+            $('#dues_payment').focus();
+            $("#dialogSec5").slideUp();
+            event.preventDefault();
+            $.ajax({
+                type: "POST",
+                contentType: "application/json; charset=utf-8",
+                url: "@Url.Action("pending_bills", "Customer")",
+                data: "{'funcParam':'" + $('#name').val() + "'}",
+            datatype: "json",
+            success:
+            function (data) { loaddata(data); },
+            error:
+            function () { alert("Failed"); }
+        });
+    });
+    
+
+    function loaddata(data)
+    {
+
+        var row_rapper = "<div>";
+        $.each(data, function (i, val) {
+
+            if (val.Msg != null) {
+                alert("Error:" + val.Msg)
+            }
+            else {
+
+                var parsedDate = new Date(parseInt(val.S_date.substr(6)));
+                var jsDate = new Date(parsedDate);
+
+                row_rapper += "<div class='dgDataRowAlternate1'>";
+                row_rapper += "<div class='mpgNumberCol'>" + val.Invoice_No + "</div>";
+                row_rapper += "<div class='mpgNameCol'>" + val.Cus_Name + "</div>";
+                row_rapper += "<div class='mpgQtyCol'>" + val.Item_Qty + "</div>";
+                row_rapper += "<div class='mpgQtyCol'>" + val.Total_Bill_Amount + "</div>";
+                row_rapper += "<div class='mpgAmountCol'>" + val.Actual_Total_Amount_Payable + "</div>";
+                row_rapper += "<div class='mpgAmountCol' id='datecol'>" + jsDate.toDateString() + "</div>";
+                row_rapper += "<div class='mpgNumberCol'>";
+                row_rapper += '@Html.ActionLink("Verfiy", "verify", "Home", new { invoice="InvoiceNo", name="Name" }, new { @Id="verify_btn11", @class = "dgDetailsLink" })'.replace("InvoiceNo", val.Invoice_No).replace("Name", val.Cus_Name);
+                row_rapper += "</div>";
+                row_rapper += "<div class='mpgActionsCol1'>";
+                row_rapper += '@Html.ActionLink("Delete", "delete", "Home",null, new {id="abcs", @class = "dgDeleteLink" })';
+                row_rapper += "&nbsp;&nbsp;&nbsp;&nbsp;";
+                row_rapper += '@Html.ActionLink("Edit", "edit", "Home", new { id =1}, new { @class = "dgEditLink" })';
+                row_rapper += "</div>";
+                row_rapper += " <div class='clearFloat'></div>";
+                row_rapper += "</div>";
+                row_rapper += "</div>";
+
+                /*for text fields*/
+                $('#pendings').val(val.Pending_Dues);
+                $('#dues').val(val.Prev_Dues);
+
+                /*for footer*/
+                $('#totalamount123').html(val.Total_Amount);
+                $('#totalactualamount').html(val.Actual_Payable_Sum);
+                 
+            }
+        });
+        $("#bills").html(row_rapper);
+
+
+    }
+
+     
+    /*For Customer Search AJAX*/
+    $("#cus_search_btn").click(function (event) {
+        event.preventDefault();
+        $.ajax({
+            type: "POST",
+            contentType: "application/json; charset=utf-8",
+            url: "@Url.Action("customer_search", "Customer")",
+            data: "{'funcParam':'" + $('#form').serialize() + "'}",
+        datatype: "json",
+        success:
+        function (data) { loadmodeldata(data); },
+        error:
+        function () { alert("Failed"); }
+    });
+    });
+
+
+    /*load data for modal customer search*/
+    function loadmodeldata(data)
+    {
+        var row_rapper = "<div style='backround-color:black'>";
+        $.each(data, function (i, val) {
+
+            var parsedDate = new Date(parseInt(val.Date.substr(6)));
+            var jsDate = new Date(parsedDate);
+
+            if (val.Search_Type == "Personal_Detail") {
+                /*row header*/
+                row_rapper +="<div class='dgHeaderRow1' style='background-color:#4DB84D;color:white;border:1px solid black;'>";
+                row_rapper += "<div class='mpgNameCol'style='width:33%; height:30px;'>Name</div>";
+                row_rapper += "<div class='mpgQtyCol' style='width:22%; height:30px;'>Mobile Number</div>";
+                row_rapper += "<div class='mpgAmountCol'style='width:15%; height:30px;'>Book Page</div>";
+                row_rapper += "<div class='mpgNumberCol' style='width:30%; height:30px;'>Address</div>";
+                row_rapper += " <div class='clearFloat'></div>";
+                row_rapper += "</div>";          
+
+                /*row body*/
+                row_rapper += "<div class='dgDataRowAlternate1'style='height:auto;border:1px solid black;'>";
+                row_rapper += "<div class='mpgNameCol'style='width:33%; height:65px;'>" + val.Name + "</div>";
+                row_rapper += "<div class='mpgQtyCol' style='width:22%; height:65px;'>" + val.Mobile + "</div>";
+                row_rapper += "<div class='mpgAmountCol'style='width:15%; height:65px;'>" + val.Book_Page_No + "</div>";
+                row_rapper += "<div class='mpgNumberCol' style='width:30%; height:65px;'>" + val.Address + "</div>";
+                row_rapper += " <div class='clearFloat'></div>";
+                row_rapper += "</div>";
+                row_rapper += "</div>";
+
+            }
+            else if (val.Search_Type == "Net_Pendings") {
+                /*row header*/
+                row_rapper += "<div class='dgHeaderRow1' style='background-color:#4DB84D;color:white;border:1px solid black;'>";
+                row_rapper += "<div class='mpgNameCol'style='width:50%; height:30px;'>Name</div>";
+                row_rapper += "<div class='mpgQtyCol' style='width:50%; height:30px;'>Net Pending Amount</div>";
+                row_rapper += " <div class='clearFloat'></div>";
+                row_rapper += "</div>";
+
+                /*row body*/
+                row_rapper += "<div class='dgDataRowAlternate1'style='height:auto;border:1px solid black;'>";
+                row_rapper += "<div class='mpgNameCol'style='width:50%; height:65px;'>" + val.Name + "</div>";
+                row_rapper += "<div class='mpgQtyCol' style='width:50%; height:65px;'>" + val.Remaining_Pending_Amount + "</div>";
+                row_rapper += " <div class='clearFloat'></div>";
+                row_rapper += "</div>";
+                row_rapper += "</div>";
+            }
+            else if (val.Search_Type == "Recievables") {
+                /*row header*/
+                row_rapper += "<div class='dgHeaderRow1' style='background-color:#4DB84D;color:white;border:1px solid black;'>";
+                row_rapper += "<div class='mpgNameCol'style='width:40%; height:30px;'>Name</div>";
+                row_rapper += "<div class='mpgQtyCol' style='width:30%; height:30px;'>Net Recievables</div>";
+                row_rapper += "<div class='mpgQtyCol' style='width:30%; height:30px;'>Net Pending Amount</div>";
+                row_rapper += " <div class='clearFloat'></div>";
+                row_rapper += "</div>";
+
+                /*row body*/
+                row_rapper += "<div class='dgDataRowAlternate1'style='height:auto;border:1px solid black;'>";
+                row_rapper += "<div class='mpgNameCol'style='width:40%; height:65px;'>" + val.Name + "</div>";
+                row_rapper += "<div class='mpgQtyCol' style='width:30%; height:65px;'>" + val.Remaining_amount + "</div>";
+                row_rapper += "<div class='mpgQtyCol' style='width:30%; height:65px;'>" + val.Remaining_Pending_Amount + "</div>";
+                row_rapper += " <div class='clearFloat'></div>";
+                row_rapper += "</div>";
+                row_rapper += "</div>";
+            }
+            else if (val.Search_Type == "Special_Detail") {
+                /*row header*/
+                row_rapper += "<div class='dgHeaderRow1' style='background-color:#4DB84D;color:white;border:1px solid black;'>";
+                row_rapper += "<div class='mpgNameCol'style='width:30%; height:50px;'>Name</div>";
+                row_rapper += "<div class='mpgQtyCol' style='width:15%; height:50px;'>Artical#</div>";
+                row_rapper += "<div class='mpgQtyCol' style='width:20%; height:50px;'>Artical Name</div>";
+                row_rapper += "<div class='mpgQtyCol' style='width:15%; height:50px;'>Pair Rate</div>";
+                row_rapper += "<div class='mpgQtyCol' style='width:10%; height:50px;'>Pair Disc</div>";
+                row_rapper += "<div class='mpgQtyCol' style='width:10%; height:50px;'>Other Disc</div>";
+                row_rapper += " <div class='clearFloat'></div>";
+                row_rapper += "</div>";
+
+                /*row body*/
+                row_rapper += "<div class='dgDataRowAlternate1'style='height:auto;border:1px solid black;'>";
+                row_rapper += "<div class='mpgNameCol'style='width:30%; height:65px;'>" + val.Name + "</div>";
+                row_rapper += "<div class='mpgQtyCol' style='width:15%; height:65px;'>" + val.Artical_No + "</div>";
+                row_rapper += "<div class='mpgQtyCol' style='width:20%; height:65px;'>" + val.Artical_Name + "</div>";
+                row_rapper += "<div class='mpgQtyCol' style='width:15%; height:65px;'>" + val.Price + "</div>";
+                row_rapper += "<div class='mpgQtyCol' style='width:10%; height:65px;'>" + val.Discount + "</div>";
+                row_rapper += "<div class='mpgQtyCol' style='width:10%; height:65px;'>" + val.Disc_For_All + "</div>";
+                row_rapper += " <div class='clearFloat'></div>";
+                row_rapper += "</div>";
+                row_rapper += "</div>";
+            }
+            else if (val.Search_Type == "Pendings_History") {
+                /*row header*/
+                row_rapper += "<div class='dgDataRowAlternate1' style='border:1px solid black;'>";
+                row_rapper += "<div class='mpgNameCol'style='width:30%; height:30px;'>Name</div>";
+                row_rapper += "<div class='mpgNameCol'style='width:70%; height:30px;'>" + val.Name + "</div>";
+                row_rapper += "<div class='mpgQtyCol' style='width:30%; height:30px;'>Invoice Number</div>";
+                row_rapper += "<div class='mpgQtyCol' style='width:70%; height:30px;'>" + val.Invoice_No + "</div>";
+                row_rapper += "<div class='mpgQtyCol' style='width:30%; height:30px;'>Artical Number</div>";
+                row_rapper += "<div class='mpgQtyCol' style='width:70%; height:30px;'>" + val.Artical_No + "</div>";
+                row_rapper += "<div class='mpgQtyCol' style='width:30%; height:30px;'>Artical Name</div>";
+                row_rapper += "<div class='mpgQtyCol' style='width:70%; height:30px;'>" + val.Artical_Name + "</div>";
+                row_rapper += "<div class='mpgQtyCol' style='width:30%; height:30px;'>Color</div>";
+                row_rapper += "<div class='mpgQtyCol' style='width:70%; height:30px;'>" + val.Color + "</div>";
+                row_rapper += "<div class='mpgQtyCol' style='width:30%; height:30px;'>Qty</div>";
+                row_rapper += "<div class='mpgQtyCol' style='width:70%; height:30px;'>" + val.Qty + "</div>";
+                row_rapper += "<div class='mpgQtyCol' style='width:30%; height:30px;'>Amount</div>";
+                row_rapper += "<div class='mpgQtyCol' style='width:70%; height:30px;'>" + val.Amount + "</div>";
+                row_rapper += "<div class='mpgQtyCol' style='width:30%; height:30px;'>Date</div>";
+                row_rapper += "<div class='mpgQtyCol' style='width:70%; height:30px;'>" + jsDate.toDateString() + "</div>";
+                row_rapper += " <div class='clearFloat'></div>";
+                row_rapper += "</div>";
+                row_rapper += "</div>";
+            }
+        });
+
+        $("#model_body_rapper").html(row_rapper);
+        $('#cus_search_btn').attr("data-toggle", "modal");
+        $('#cus_search_btn').attr("data-target", "#myModal");
+
+    }
+
+    /*For Artical Search AJAX*/
+    $("#art_search_btn").click(function (event) {
+        event.preventDefault();
+        $.ajax({
+            type: "POST",
+            contentType: "application/json; charset=utf-8",
+            url: "@Url.Action("artical_search", "Article")",
+            data: "{'funcParam':'" + $('#frm').serialize() + "'}",
+        datatype: "json",
+        success:
+        function (data) { loadarticaldata(data); },
+        error:
+        function () { alert("Failed"); }
+    });
+    });
+
+    function loadarticaldata(data) {
+        var row_rapper = "<div style='backround-color:black'>";
+        $.each(data, function (i, val) {
+
+            if (val.Search_Option == "Artical_Detail" || val.Search_Option == "Artical_Detail_Series_Wise") {
+                /*row header*/
+                row_rapper += "<div class='dgDataRowAlternate1' style='border:1px solid black;'>";
+                row_rapper += "<div class='mpgNameCol'style='width:30%; height:30px;'>Artical Number</div>";
+                row_rapper += "<div class='mpgNameCol'style='width:70%; height:30px;'>" + val.Artical_No + "</div>";
+                row_rapper += "<div class='mpgQtyCol' style='width:30%; height:30px;'>Artical Name</div>";
+                row_rapper += "<div class='mpgQtyCol' style='width:70%; height:30px;'>" + val.Artical_Name + "</div>";
+                row_rapper += "<div class='mpgQtyCol' style='width:30%; height:30px;'>Color</div>";
+                row_rapper += "<div class='mpgQtyCol' style='width:70%; height:30px;'>" + val.Color + "</div>";
+                row_rapper += "<div class='mpgQtyCol' style='width:30%; height:30px;'>Stock In Danger Limit</div>";
+                row_rapper += "<div class='mpgQtyCol' style='width:70%; height:30px;'>" + val.Stock_In_Danger_Limit + "</div>";
+                row_rapper += "<div class='mpgQtyCol' style='width:30%; height:30px;'>Pair Rate</div>";
+                row_rapper += "<div class='mpgQtyCol' style='width:70%; height:30px;'>" + val.Pair_Rate + "</div>";
+                row_rapper += "<div class='mpgQtyCol' style='width:30%; height:30px;'>Pair Discount</div>";
+                row_rapper += "<div class='mpgQtyCol' style='width:70%; height:30px;'>" + val.Pair_Disc + "</div>";
+                row_rapper += " <div class='clearFloat'></div>";
+                row_rapper += "</div>";
+                row_rapper += "</div>";
+            }
+            else 
+            {
+                /*row header*/
+                row_rapper += "<div class='dgHeaderRow1' style='background-color:#4DB84D;color:white;border:1px solid black;'>";
+                row_rapper += "<div class='mpgNameCol bold'style='width:30%; height:30px;'>Artical Number</div>";
+                row_rapper += "<div class='mpgQtyCol bold' style='width:30%; height:30px;'>Artical Name</div>";
+                row_rapper += "<div class='mpgQtyCol bold' style='width:20%; height:30px;'>Color</div>";
+                row_rapper += "<div class='mpgQtyCol bold' style='width:20%; height:30px;'>Qty</div>";
+                row_rapper += " <div class='clearFloat'></div>";
+                row_rapper += "</div>";
+
+                /*row body*/
+                row_rapper += "<div class='dgDataRowAlternate1'style='height:auto;border:1px solid black;'>";
+                row_rapper += "<div class='mpgNameCol'style='width:30%; height:65px;'>" + val.Artical_No + "</div>";
+                row_rapper += "<div class='mpgQtyCol' style='width:30%; height:65px;'>" + val.Artical_Name + "</div>";
+                row_rapper += "<div class='mpgQtyCol' style='width:20%; height:65px;'>" + val.Color + "</div>";
+                row_rapper += "<div class='mpgQtyCol' style='width:20%; height:65px;'>" + val.Qty + "</div>";
+                row_rapper += " <div class='clearFloat'></div>";
+                row_rapper += "</div>";
+                row_rapper += "</div>";
+            }
+                
+        });
+
+        $("#model_body_rapper").html(row_rapper);
+        $('#art_search_btn').attr("data-toggle", "modal");
+        $('#art_search_btn').attr("data-target", "#myModal");
+
+    }
+
+        /*For auto fetch Artical names list And its Color */
+        /*for auto artical name get for special customers*/
+    $('#artnumber_for_price').blur(function (event) {
+        event.preventDefault();
+        $.ajax({
+            type: "POST",
+            contentType: "application/json; charset=utf-8",
+            url: "@Url.Action("articalNamesListByArticalNo", "Article")",
+            data: "{'artical':'" + $('#artnumber_for_price').val() + "'}",
+        datatype: "json",
+        success:
+        function (data) {
+            $("#artical_for_price option").remove();
+            $.each(data, function (i, dat) {
+                $('#artical_for_price').append($('<option>', {
+                    value: dat,
+                    text: dat
+                }));
+            });
+        },
+        error:
+        function () { alert("Failed"); }
+                    
+    });
+    });
+        /*for auto artical name get for Pendings Amounts in customers*/
+        $('#artical_no_for_pendings').blur(function (event) {
+            event.preventDefault();
+            $.ajax({
+                type: "POST",
+                contentType: "application/json; charset=utf-8",
+                url: "@Url.Action("articalNamesListByArticalNo", "Article")",
+                data: "{'artical':'" + $('#artical_no_for_pendings').val() + "'}",
+            datatype: "json",
+            success:
+            function (data) {
+                $("#artical_names_for_pendings option").remove();
+                $.each(data, function (i, dat) {
+                    $('#artical_names_for_pendings').append($('<option>', {
+                        value: dat,
+                        text: dat
+                    }));
+                });
+            },
+            error:
+            function () { alert("Failed"); }
+                    
+        });
+    });
+/*for auto get color in options for pending amounts in customers*/
+        $('#artical_names_for_pendings').blur(function (event) {
+    event.preventDefault();
+    $.ajax({
+        type: "POST",
+        contentType: "application/json; charset=utf-8",
+        url: "@Url.Action("articalColorListByArticalNo", "Article")",
+        data: "{'artical':'" + $('#artical_no_for_pendings').val() + "' ,'articalname':'" + $('#artical_names_for_pendings :selected').text() + "' }",
+    datatype: "json",
+    success:
+    function (data) {
+        $("#colors_for_pendings option").remove();
+        $.each(data, function (i, dat) {
+            $('#colors_for_pendings').append($('<option>', {
+                value: dat,
+                text: dat
+            }));
+        });
+    },
+    error:
+    function () { alert("Failed"); }
+                    
+});
+}); 
+
+        /*for auto artical name get for stock articals*/
+        $('#name6').blur(function (event) {
+            $("#dialogSec2").slideUp();
+            event.preventDefault();
+            $.ajax({
+                type: "POST",
+                contentType: "application/json; charset=utf-8",
+                url: "@Url.Action("articalNamesListByArticalNo", "Article")",
+                data: "{'artical':'" + $('#name6').val() + "'}",
+            datatype: "json",
+            success:
+            function (data) {
+                $("#artical_names_for_stock option").remove();
+                $.each(data, function (i, dat) {
+                    $('#artical_names_for_stock').append($('<option>', {
+                        value: dat,
+                        text: dat
+                    }));
+                });
+            },
+            error:
+            function () { alert("Failed"); }
+                    
+        });
+    });
+    /*for auto get color in options for artical stock*/
+        $('#artical_names_for_stock').blur(function (event) {
+        event.preventDefault();
+        $.ajax({
+            type: "POST",
+            contentType: "application/json; charset=utf-8",
+            url: "@Url.Action("articalColorListByArticalNo", "Article")",
+            data: "{'artical':'" + $('#name6').val() + "' ,'articalname':'" + $('#artical_names_for_stock :selected').text() + "' }",
+        datatype: "json",
+        success:
+        function (data) {
+            $("#colors_for_stock option").remove();
+            $.each(data, function (i, dat) {
+                $('#colors_for_stock').append($('<option>', {
+                    value: dat,
+                    text: dat
+                }));
+            });
+        },
+        error:
+        function () { alert("Failed"); }
+                    
+    });
+        }); 
+
+        /*for auto artical name get for search articals*/
+        $('#artical_for_search').blur(function (event) {
+            $("#dialogSec2").slideUp();
+            event.preventDefault();
+            $.ajax({
+                type: "POST",
+                contentType: "application/json; charset=utf-8",
+                url: "@Url.Action("articalNamesListByArticalNo", "Article")",
+                data: "{'artical':'" + $('#artical_for_search').val() + "'}",
+            datatype: "json",
+            success:
+            function (data) {
+                $("#artical_names_for_artical_search option").remove();
+                $.each(data, function (i, dat) {
+                    $('#artical_names_for_artical_search').append($('<option>', {
+                        value: dat,
+                        text: dat
+                    }));
+                });
+            },
+            error:
+            function () { alert("Failed"); }
+                    
+        });
+    });
+    });
+        </script>
+</head>
+
+    <body data-spy="scroll" data-target="#main-navbar">
+            <div class="navbar navbar-inverse navbar-fixed-top" id="main-navbar">
+                <div class="container">
+                    <div class="navbar-header">
+                        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                        </button>
+        @Html.ActionLink("Best Power Shoes", "Index", "Home", null, new { @class = "navbar-brand" })
+                    </div>
+                    <div class="navbar-collapse collapse">
+                        <ul class="nav navbar-nav">
+                            <li id="sale"><a href="#">Sales</a></li>
+                            <li><a href="#section-customer">Customer menu</a></li>
+                            <li><a href="#section-artical">Article Menu</a></li>
+                            <li id="report"><a href="#">Reports</a></li>
+
+
+                        </ul>
+        @Html.Partial("_LoginPartial")
+                    </div>
+                </div>
+            </div>
+            <div class="container">
+                <!-- Modal -->
+                <div class="modal fade" id="myModal" role="dialog">
+                    <div class="modal-dialog modal-lg">
+
+                        <!-- Modal content-->
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                <h4 class="modal-title">Best Power Shoes</h4>
+                            </div>
+                            <div class="modal-body" id="model_body_rapper">
+
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+
+                    </div>
+                </div> <!--end of model content-->
+
+                <div class="jumbotron">
+
+                    <div class="sale_inner" id="sale_inner">
+                        <ul>
+                            <li>@Html.ActionLink("Sale Menu", "Sale", "Home")<br /></li>
+                            <li>@Html.ActionLink("Sale Return menu", "SaleReturn", "Home")<br /></li>
+                            <li>@Html.ActionLink("Sale Search Menu", "SaleSearch", "Home")<br /></li>
+                        </ul>
+                    </div><!--end of sale_inner div-->
+                    <div class="report_inner" id="report_inner">
+                        <ul>
+                            <li>@Html.ActionLink("Weekly Report", "WeeklyReport", "Home")<br /></li>
+                            <li>@Html.ActionLink("Stock In Danger Report", "StockSearch", "Home")<br /></li>
+
+                        </ul>
+                    </div><!--end of report_inner div-->
+
+
+
+                    <h1>BEST POWER SHOES</h1>
+                    <p class="lead">Best Power Shoes is the best shoes company in pakistan.</p>
+                    <p><a href="http://www.BestPowerShoes.com" class="btn btn-primary btn-large">View more &raquo;</a></p>
+                </div>
+
+                <!--For Customer Menu-->
+                <section>
+                    <div class="page-header" id="section-customer">
+                        <h2>Customer Menu</h2>
+                    </div>
+                    <div class="panel-group" id="accordian-qa">
+                        <!--FOR Add CUSTOMER-->
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h4 class="panel-title">
+                                    <a href="#qa-1" data-toggle="collapse" data-parent="#accordian-qa">
+                                        ADD/UPDATE CUSTOMER
+                                    </a>
+                                </h4>
+                            </div>
+
+                            <div class="panel-collapse collapse" id="qa-1">
+                                <div class="panel-body">
+                                    @using (Html.BeginForm("", "", FormMethod.Post, new { @Id = "formData", @class = "form-horizontal", role = "form" }))
+                                    {
+
+                                        <h4>Add New Customer Panel</h4>
+                                        <hr />
+
+
+                        <!--second textbox-->
+                                        <div class="form-group">
+                                            @Html.Label("Name", new { @class = "col-md-2 control-label" })
+                                            <div class="col-xs-10">
+                                                @Html.TextBox("name", "", new { required = "required", @Id = "name1", @class = "form-control" })
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            @Html.Label("Mobile Number", new { @class = "col-md-2 control-label" })
+                                            <div class="col-xs-10">
+                                                @Html.TextBox("mobile_no", "0", new { @class = "form-control", type = "number" })
+                                            </div>
+                                        </div>
+                        <!--second textbox-->
+                                        <div class="form-group">
+                                            @Html.Label("Book Page Number", new { @class = "col-md-2 control-label" })
+                                            <div class="col-xs-10">
+                                                @Html.TextBox("book_page_no", "0", new { type = "number", @class = "form-control" })
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            @Html.Label("Adddress", new { @class = "col-md-2 control-label" })
+                                            <div class="col-xs-10">
+                                                @Html.TextBox("address", "Lahore", new { @class = "form-control" })
+                                            </div>
+                                        </div>
+                                        <div id="dialogSec">
+
+                                        </div>
+
+                <!--Buttons-->
+                                        <a href="/Customer/Add/" id="check" class="btn btn-primary col-md-offset-2">ADD</a>
+                                        <a href="/Customer/Edit/" class="btn btn-default" id="edit">UPDATE</a> /* onclick="this.form.action ='/Customer/Edit'"*/
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                        <!--FOR SPECIAL CUSTOMER-->
+                        <div class="panel panel-default" id="section-special-customer">
+                            <div class="panel-heading">
+                                <h4 class="panel-title">
+                                    <a href="#qa-4" data-toggle="collapse" data-parent="#accordian-qa">
+                                        ADD/UPDATE SPECIAL CUSTOMER
+                                    </a>
+                                </h4>
+                            </div>
+                            <div class="panel-collapse collapse" id="qa-4">
+                                <div class="panel-body">
+                                    @using (Html.BeginForm("Add_Article", "Customer", FormMethod.Post, new { @Id = "formData3", @class = "form-horizontal", role = "form" }))
+                                    {
+
+                                        <h4>Add Special Customer Panel</h4>
+                                        <hr />
+
+
+                        <!--second textbox-->
+                                        <div class="form-group">
+                                            @Html.Label("Customer Name", new { @class = "col-md-2 control-label" })
+                                            <div class="col-xs-10">
+                                                @Html.TextBox("cus_name", "", new { required = "required", @Id = "name2", @class = "form-control" })
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            @Html.Label("Artical Number", new { @class = "col-md-2 control-label" })
+                                            <div class="col-xs-10">
+                                                @Html.TextBox("artical_no", "", new { @Id = "artnumber_for_price", type = "number", required = "required", @class = "form-control" })
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            @Html.Label("Artical Name", new { @class = "col-md-2 control-label" })
+                                            <div class="col-xs-10">
+                                                <select id="artical_for_price" class="form-control" name="artical_name" style="width:220px; height:60%;"></select>
+                                            </div>
+                                        </div>
+                        <!--second textbox-->
+                                        <div class="form-group">
+                                            @Html.Label("Price", new { @class = "col-md-2 control-label" })
+                                            <div class="col-xs-10">
+                                                @Html.TextBox("price", "", new { @Id = "artical_price111", type = "number", @class = "form-control", @readonly = "readonly" })
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            @Html.Label("Discount *", new { @class = "col-md-2 control-label" })
+                                            <div class="col-xs-10">
+                                                @Html.TextBox("discount", "0", new { @Id = "autodisc", type = "number", @class = "form-control" })
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            @Html.Label("Discount For All Articals", new { @class = "col-md-2 control-label" })
+                                            <div class="col-xs-10">
+                                                @Html.TextBox("disc_for_all", "", new { type = "number", @class = "form-control" })
+                                            </div>
+                                        </div>
+                                        <div id="dialogSec3">
+
+                                        </div>
+                      <!--Buttons-->
+                                        <a href="/Customer/Add_Special/" id="c_special_add" class="btn btn-primary col-md-offset-2">ADD</a>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                        <!--FOR bill pending amounts of CUSTOMERS-->
+                        <div class="panel panel-default" id="section-special-customer">
+                            <div class="panel-heading">
+                                <h4 class="panel-title">
+                                    <a href="#qa-15" data-toggle="collapse" data-parent="#accordian-qa">
+                                        ADD/UPDATE PENDING AMOUNTS
+                                    </a>
+                                </h4>
+                            </div>
+                            <div class="panel-collapse collapse" id="qa-15">
+                                <div class="panel-body">
+                                    @using (Html.BeginForm("Add_Article", "Customer", FormMethod.Post, new { @Id = "formData4", @class = "form-horizontal", role = "form" }))
+                                    {
+
+                                        <h4>Create Pending Amount Panel</h4>
+                                        <hr />
+
+
+                        <!--first textbox-->
+                                        <div class="form-group">
+                                            @Html.Label("Customer Name *", new { @class = "col-md-2 control-label" })
+                                            <div class="col-xs-10">
+                                                @Html.TextBox("cus_name", "", new { @Id = "name3", required = "required", @class = "form-control" })
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            @Html.Label("Invoice Number", new { @class = "col-md-2 control-label" })
+                                            <div class="col-xs-10">
+                                                @Html.TextBox("invoice_no", "0", new { type = "number", @class = "form-control" })
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            @Html.Label("Artical Number", new { @class = "col-md-2 control-label" })
+                                            <div class="col-xs-10">
+                                                @Html.TextBox("artical_no", "0", new {@Id="artical_no_for_pendings", type = "number", @class = "form-control" })
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            @Html.Label("Artical Name", new { @class = "col-md-2 control-label" })
+                                            <div class="col-xs-10">
+                                                <select id="artical_names_for_pendings" class="form-control" name="artical_name" style="width:220px; height:60%;"></select>
+                                           </div>
+                                        </div>
+                        <!--second textbox-->
+                                        <div class="form-group">
+                                            @Html.Label("Color", new { @class = "col-md-2 control-label" })
+                                            <div class="col-xs-10">
+                                                <select id="colors_for_pendings" class="form-control" name="color" style="width:220px; height:60%;"></select>
+                                             </div>
+                                        </div>
+                                        <div class="form-group">
+                                            @Html.Label("Qty", new { @class = "col-md-2 control-label" })
+                                            <div class="col-xs-10">
+                                                @Html.TextBox("qty", "0", new { type = "number", @class = "form-control" })
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            @Html.Label("Amount *", new { @class = "col-md-2 control-label" })
+                                            <div class="col-xs-10">
+                                                @Html.TextBox("amount", "0", new { type = "number", @class = "form-control" })
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            @Html.Label("Date", new { @class = "col-md-2 control-label" })
+                                            <div class="col-xs-10">
+                                                 @Html.TextBox("date", DateTime.Now.ToString("yyyy-MM-dd"), new {style = "width:220px;" , type = "date", @class = "form-control"})
+                                            </div>
+                                        </div>
+                                        <div id="dialogSec4">
+
+                                        </div>
+                      <!--Buttons-->
+                                        <a href="/Customer/Add_Pendings/" id="add_pending_amount" class="btn btn-primary col-md-1 col-md-offset-2">ADD</a>
+                                        <a href="/Customer/Edit_Pendings/" id="edit_pending_amount" class="btn btn-default col-md-2">UPDATE OVERALL</a>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                        <!--for second recieve payment-->
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h4 class="panel-title">
+                                    <a href="#qa-2" data-toggle="collapse" data-parent="#accordian-qa">
+                                        RECIEVE PAYMENT FROM CUSTOMER
+                                    </a>
+                                </h4>
+                            </div>
+                            <div class="panel-collapse collapse" id="qa-2">
+                                <div class="panel-body">
+                                    @using (Html.BeginForm("Reciepts", "Customer", FormMethod.Post, new { @Id = "formData5", @class = "form-horizontal", role = "form" }))
+                                    {
+
+                                        <h4>Reciepts Panel</h4>
+                                        <hr />
+
+
+                            <!--second textbox-->
+                                        <div class="form-group">
+                                            @Html.Label("Customer Name *", new { @class = "col-md-2 control-label" })
+                                            <div class="col-xs-10">
+                                                @Html.TextBox("cus_name", "", new { @Id = "name", required = "required", @class = "form-control" })
+                                            </div>
+                                        </div>
+                         <!--second textbox-->
+                                        <div class="form-group">
+                                            @Html.Label("Previouse Dues *", new { @class = "col-md-2 control-label" })
+                                            <div class="col-xs-10">
+                                                @Html.TextBox("dues", "0", new { @Id = "dues", type = "number", @class = "form-control" })
+                                            </div>
+                                        </div>
+                        <!--second textbox-->
+                                        <div class="form-group">
+                                            @Html.Label("Pending Amounts *", new { @class = "col-md-2 control-label red" })
+                                            <div class="col-xs-10">
+                                                @Html.TextBox("Pending_Amount", "0", new { @Id = "pendings", type = "number", @class = "form-control" })
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            @Html.Label("Dues Payment", new { @class = "col-md-2 control-label" })
+                                            <div class="col-xs-10">
+                                                @Html.TextBox("dues_payment", "0", new { @Id = "dues_payment", type = "number", @class = "form-control" })
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            @Html.Label("Pending Payment", new { @class = "col-md-2 control-label" })
+                                            <div class="col-xs-10">
+                                                @Html.TextBox("pending_payment", "0", new { @Id = "pending_payment", type = "number", @class = "form-control" })
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            @Html.Label("Claim", new { @class = "col-md-2 control-label" })
+                                            <div class="col-xs-10">
+                                                @Html.TextBox("claim", "0", new { @Id = "claim", type = "number", @class = "form-control" })
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            @Html.Label("Remaining", new { @class = "col-md-2 control-label" })
+                                            <div class="col-xs-10">
+                                                @Html.TextBox("remaining", "0", new { @Id = "rem", type = "number", @class = "form-control" })
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            @Html.Label("Date", new { @class = "col-md-2 control-label" })
+                                            <div class="col-xs-10">
+                                                @Html.TextBox("date", DateTime.Now.ToString("yyyy-MM-dd"), new {style = "width:220px;" , type = "date", @Id = "DealingSince", @class = "form-control" })
+
+                                            </div>
+                                        </div>
+                                        <div id="dialogSec5">
+
+                                        </div>
+                      <!--Buttons-->
+                                        <a href="/Customer/Add_Reciepts/" id="add_rec" class="btn btn-primary col-md-1 col-md-offset-2">ADD</a>
+                                        <a href="/Customer/Edit_Reciepts/" id="edit_rec" class="btn btn-default col-md-2">UPDATE OVERALL</a>
+                                    }
+                                </div>
+                                <div class="aa" style="float: left; width: 100%;height:auto">
+
+                                    <div class="dgHeaderRow1" style="background-color:#4DB84D;color:white;">
+                                        <div class="mpgNumberCol">
+                                            Invoice#
+                                        </div>
+                                        <div class="mpgNameCol">
+                                            Customer Name
+                                        </div>
+                                        <div class="mpgQtyCol">
+                                            Total Qty
+                                        </div>
+                                        <div class="mpgQtyCol">
+                                            Total Bill
+                                        </div>
+                                        <div class="mpgAmountCol">
+                                            Total Actual Bill
+                                        </div>
+
+                                        <div class="mpgAmountCol">
+                                            Date
+                                        </div>
+                                        <div class="mpgNumberCol">
+                                            Verification
+                                        </div>
+                                        <div class="mpgActionsCol1">
+                                            Actions
+                                        </div>
+                                        <div class="clearFloat"></div>
+                                    </div>
+                                    <!--For Data Rows Only-->
+                                    <div id="bills" style="background-color:black;"></div>
+                                    <!--**************************  Data Grid Footer Row *****************-->
+                                    <div class="dgFooterRow" style="background-color:darkolivegreen; color:white;height:30px">
+                                        <div class="mpgNumberCol">
+
+                                        </div>
+                                        <div class="mpgNameCol">
+
+                                        </div>
+                                        <div class="mpgQtyCol">
+                                            TOTAL
+                                        </div>
+                                        <div class="mpgQtyCol" id="totalamount123">
+
+                                        </div>
+                                        <div class="mpgAmountCol" id="totalactualamount">
+
+                                        </div>
+
+
+                                        <div class="mpgActionsCol1">
+
+                                        </div>
+                                        <div class="clearFloat"></div>
+                                    </div><!--end of data grid footer row  -->
+
+                                </div>
+                            </div>
+                        </div>
+                        <!--FOR SEARCH CUSTOMER DETAILS-->
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h4 class="panel-title">
+                                    <a href="#qa-3" data-toggle="collapse" data-parent="#accordian-qa">
+                                        SEARCH CUSTOMER DETAILS
+                                    </a>
+                                </h4>
+                            </div>
+                            <div class="panel-collapse collapse" id="qa-3">
+                                <div class="panel-body">
+                                    @using (Html.BeginForm("customer_search", "Customer", FormMethod.Post, new { @Id = "form", @class = "form-horizontal", role = "form" }))
+                                    {
+
+                                        <h4>Search Customer Details Panel</h4>
+                                        <hr />
+
+                                        <div class="form-group">
+                                            @Html.Label("Customer Name", new { @class = "col-md-2 control-label" })
+                                            <div class="col-xs-10">
+                                                <input type="text" id="name_search" class="form-control" name="cus_name" />
+
+                                            </div>
+                                        </div>
+                        <!--second textbox-->
+                                        <div class="form-group">
+                                            @Html.Label("Search For", new { @class = "col-md-2 control-label" })
+                                            <div class="col-xs-10">
+                                                <select name="search_type">
+                                                    <option>Personal_Detail</option>
+                                                    <option>Special_Detail</option>
+                                                    <option>Net_Pendings</option>
+                                                    <option>Pendings_History</option>
+                                                    <option>Recievables</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                      <!--Buttons  -->
+
+                                        <a href="" id="cus_search_btn" class="btn btn-primary col-md-offset-2">Enter</a>
+
+                                    }
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </section><!--End of customer section-->
+                <!--For Article Menu-->
+                <section>
+                    <div class="page-header" id="section-artical">
+                        <h2>Article Menu</h2>
+                    </div>
+                    <div class="panel-group" id="accordian-qb">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h4 class="panel-title">
+                                    <a href="#qa-5" data-toggle="collapse" data-parent="#accordian-qb">
+                                        ADD/UPDATE ARTICLE
+                                    </a>
+                                </h4>
+                            </div>
+                            <div class="panel-collapse collapse" id="qa-5">
+                                <div class="panel-body">
+                                    @using (Html.BeginForm("Add", "Article", FormMethod.Post, new { @Id = "formData1", @class = "form-horizontal", role = "form" }))
+                                    {
+
+                                        <h4>Add New Article Panel</h4>
+                                        <hr />
+
+                                        <div class="form-group">
+                                            @Html.Label("Article Number", new { @class = "col-md-2 control-label" })
+                                            <div class="col-xs-10">
+                                                @Html.TextBox("artical_id", "", new { @Id = "name5", type = "number", required = "required", @class = "form-control" })
+                                            </div>
+                                        </div>
+                        <!--second textbox-->
+                                        <div class="form-group">
+                                            @Html.Label("Article Name", new { @class = "col-md-2 control-label" })
+                                            <div class="col-xs-10">
+                                                @Html.TextBox("artical_name", "", new { required = "required", @class = "form-control" })
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            @Html.Label("Color", new { @class = "col-md-2 control-label" })
+                                            <div class="col-xs-10">
+                                                @Html.TextBox("color", "", new { required = "required", @class = "form-control" })
+                                            </div>
+                                        </div>
+                        <!--second textbox-->
+                                        <div class="form-group">
+                                            @Html.Label("Stock In Danger Limit", new { @class = "col-md-2 control-label" })
+                                            <div class="col-xs-10">
+                                                @Html.TextBox("stock_in_danger", "0", new { type = "number", @class = "form-control" })
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            @Html.Label("Price", new { @class = "col-md-2 control-label" })
+                                            <div class="col-xs-10">
+                                                @Html.TextBox("price", "0", new { type = "number", @class = "form-control" })
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            @Html.Label("Discount", new { @class = "col-md-2 control-label" })
+                                            <div class="col-xs-10">
+                                                @Html.TextBox("discount", "0", new { type = "number", @class = "form-control" })
+                                            </div>
+                                        </div>
+                                        <div id="dialogSec1">
+
+                                        </div>
+                             <!--Buttons-->
+                                        <a href="/Article/Add/" id="a_add" class="btn btn-primary col-md-offset-2">ADD</a>
+                                        <a href="/Article/Edit/" id="a_edit" class="btn btn-default">UPDATE</a>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+
+                        <!--Artical Add In Stock-->
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h4 class="panel-title">
+                                    <a href="#qa-6" data-toggle="collapse" data-parent="#accordian-qb">
+                                        ADD ARTICLE IN STOCK
+                                    </a>
+                                </h4>
+                            </div>
+                            <div class="panel-collapse collapse" id="qa-6">
+                                <div class="panel-body">
+                                    @using (Html.BeginForm("Add_Stock", "Article", FormMethod.Post, new { @Id = "formData2", @class = "form-horizontal", role = "form" }))
+                                    {
+
+                                        <h4>Article Add In Stock Panel</h4>
+                                        <hr />
+
+                                        <div class="form-group">
+                                            @Html.Label("Article Number", new { @class = "col-md-2 control-label" })
+                                            <div class="col-xs-10">
+                                                @Html.TextBox("artical_id", "", new { @Id = "name6", type = "number", required = "required", @class = "form-control" })
+                                            </div>
+                                        </div>
+                        <!--second textbox-->
+                                        <div class="form-group">
+                                            @Html.Label("Article Name", new { @class = "col-md-2 control-label" })
+                                            <div class="col-xs-10">
+                                                <select id="artical_names_for_stock" class="form-control" name="artical_name" style="width:220px; height:60%;"></select>
+                                             </div>
+                                        </div>
+                                        <div class="form-group">
+                                            @Html.Label("Color", new { @class = "col-md-2 control-label" })
+                                            <div class="col-xs-10">
+                                                <select id="colors_for_stock" class="form-control" name="color" style="width:220px; height:60%;"></select>
+                                             </div>
+                                        </div>
+                        <!--second textbox-->
+                                        <div class="form-group">
+                                            @Html.Label("Qty", new { @class = "col-md-2 control-label" })
+                                            <div class="col-xs-10">
+                                                @Html.TextBox("qty", "0", new { type = "number", @class = "form-control" })
+                                            </div>
+                                        </div>
+                                        <div id="dialogSec2">
+
+                                        </div>
+                      <!--Buttons-->
+                                        <a href="/Article/Add_Stock/" id="a_s_add" class="btn btn-primary col-md-2 col-md-offset-2">ADD</a>
+                                        <a href="/Article/Edit_Stock/" id="a_s_edit" class="btn btn-default col-md-2">UPDATE OVERALL</a>
+
+
+                                    }
+                                </div>
+                            </div>
+                        </div>
+
+                        <!--FOR SEARCH Atrical DETAILS-->
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h4 class="panel-title">
+                                    <a href="#qa-7" data-toggle="collapse" data-parent="#accordian-qb">
+                                        SEARCH ARTICAL DETAILS
+                                    </a>
+                                </h4>
+                            </div>
+                            <div class="panel-collapse collapse" id="qa-7">
+                                <div class="panel-body">
+                                    @using (Html.BeginForm("Add_Article", "Customer", FormMethod.Post, new { @Id = "frm", @class = "form-horizontal", role = "form" }))
+                                    {
+
+                                        <h4>Search Artical Details Panel</h4>
+                                        <hr />
+
+                                        <div class="form-group">
+                                            @Html.Label("Artical Number", new { @class = "col-md-2 control-label" })
+                                            <div class="col-xs-10">
+                                                @Html.TextBox("artical_no", "", new {@Id="artical_for_search", type = "number", @class = "form-control" })
+                                            </div>
+                                        </div>
+                                         <div class="form-group">
+                                            @Html.Label("Artical Name", new { @class = "col-md-2 control-label" })
+                                            <div class="col-xs-10">
+                                                <select id="artical_names_for_artical_search" class="form-control" name="artical_name" style="width:220px; height:60%;"></select>
+                                                 
+                                            </div>
+                                        </div>
+                        <!--second textbox-->
+                                        <div class="form-group">
+                                            @Html.Label("Search For", new { @class = "col-md-2 control-label" })
+                                            <div class="col-xs-10">
+                                                <select name="search_option">
+                                                    <option>Artical_Detail</option>
+                                                    <option>Stock</option>
+                                                    <option>Artical_Detail_Series_Wise</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                      <!--Buttons-->
+                                        <a href="" id="art_search_btn" class="btn btn-primary col-md-offset-2">Enter</a>
+
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section><!--End of article section-->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                <hr />
+        @*<footer>
+                <p>&copy; @DateTime.Now.Year - Best Power Shoes private Limited.</p>
+            </footer>*@
+            </div>
+
+         </body>
+
+
+        </html>
+

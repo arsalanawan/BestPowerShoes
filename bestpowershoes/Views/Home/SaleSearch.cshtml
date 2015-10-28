@@ -1,0 +1,138 @@
+﻿@model List<Best_Power_Shoes_ver_1._0.Models.Sale_Details>
+
+@{
+    Layout = null;
+    WebGrid grid = new WebGrid(Model);
+   
+    
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <link href="~/Content/css/style.css" rel="stylesheet" />
+    <style type="text/css">
+        .grid {
+            margin: 4px;
+            border-collapse: collapse;
+            width: 600px;
+        }
+
+            .grid th, .grid td {
+                border: 1px solid #C0C0C0;
+                padding: 5px;
+            }
+
+        .head {
+            background-color: #E8E8E8;
+            font-weight: bold;
+            color: #FFF;
+        }
+
+        .alt {
+            background-color: #E8E8E8;
+            color: #000;
+        }
+    </style>
+    <title>Sales Search</title>
+</head>
+<body>
+    <div class="backarrow">
+        @Html.ActionLink("BACK TO HOME PAGE", "Index", "Home")
+    </div>
+    <div class="working">
+        <div class="input_container" style="height:380px;">
+            @using (Html.BeginForm("SaleSearch", "Home", FormMethod.Post, new { @class = "", role = "form" }))
+            {
+                <h2>Sales Search Panel</h2>
+                <hr />
+                <div class="form-wrapper">
+                    <!--form control 1-->
+                    <div class="form-group-1">
+                        @Html.Label("Date Begin", new { @class = "label-control-1" })
+                        <div class="form-control-1">
+                            @Html.TextBox("date_begin", DateTime.Now.ToString("yyyy-MM-dd"), new { type = "date", @class = "form-control" })
+                         </div>
+                    </div><!--end of date begin-->
+                    <!--end of container-->
+                    <!--form control 1-->
+                    <div class="form-group-1">
+                        @Html.Label("Date End", new { @class = "label-control-1" })
+                        <div class="form-control-1">
+                            @Html.TextBox("date-end", DateTime.Now.ToString("yyyy-MM-dd"), new { type = "date", @class = "form-control" })
+                        </div>
+                    </div><!--end of date end-->
+                    <div class="form-group-1">
+                        @Html.Label("Customer Name", new { @class = "label-control-1" })
+                        <div class="form-control-1">
+                            <input type="text" name="name" style="height:20px"/>
+                        </div>
+                    </div><!--end of customer id-->
+                    <!--end of container-->
+                    <hr style="clear:both; width:100%;margin-top:10px;">
+                    <div class="form-group-1">
+                        @Html.Label("Customer Name Wise Only", new { @class = "label-control-1" })
+                        <div class="form-control-1">
+                            <input type="text" name="namewise" style="height:20px" />
+                        </div>
+                    </div><!--end of customer id-->
+                    
+                    <div class="form-group-1">
+                        @Html.Label("Invoice Wise Only", new { @class = "label-control-1" })
+                        <div class="form-control-1">
+                            <input type="text" name="invoice" style="height:20px" />
+                        </div>
+                    </div><!--end of customer id-->
+                    <hr style="clear:both; width:100%;">
+                    <!--Buttons-->
+                    <div class="form-group-1">
+                        <div style="width:100%; height:20px;">
+                        </div>
+                        <div class="form-control-1">
+                            <a href=""><input type="submit" value="Search" class="btn btn-primary" /></a>
+                            <a href=""><input type="button" value="Cancel" class="btn" /></a>
+                        </div>
+                    </div><!--end of buttons-->
+                </div>
+            }
+
+        </div>
+        <div class="bill_detail" style="background-color:white;width:63%; margin-left:14%;">
+
+         @if (ViewBag.msg !="invoice_detail")
+            {
+             @grid.GetHtml(
+             tableStyle: "grid",
+             headerStyle: "head",
+             alternatingRowStyle: "alt",
+               columns: new[]{
+                 grid.Column("Counter"),
+                 grid.Column("Cus_Name"),
+                 grid.Column("Invoice_No"),
+                 grid.Column("Total_Qty"),
+                 grid.Column("Total_Amount"),
+                })
+            }
+         else
+         {
+            @grid.GetHtml(
+             tableStyle: "grid",
+             headerStyle: "head",
+             alternatingRowStyle: "alt",
+               columns: new[]{
+                 grid.Column("Counter"),
+                 grid.Column("Invoice_No"),
+                 grid.Column("Artical_No"),
+                 grid.Column("Artical_Name"),
+                 grid.Column("Color"),
+                 grid.Column("Pair_Rate"),
+                 grid.Column("Pair_Disc"),
+                 grid.Column("Qty"),
+                 grid.Column("Amount"),
+                })
+         }
+          </div>
+    </div><!--end of working container-->
+ </body>
+</html>
+

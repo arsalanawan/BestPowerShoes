@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="8866079152854184b515e0c49a30a93a" Name="Diagram1">
+        <EntityTypeShape EntityType="BestShoesDBModel.artical" Width="1.5" PointX="3" PointY="3.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="BestShoesDBModel.customer" Width="1.5" PointX="0.75" PointY="8.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="BestShoesDBModel.pending_amounts" Width="1.5" PointX="5.25" PointY="11.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="BestShoesDBModel.reciept" Width="1.5" PointX="3" PointY="7.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="BestShoesDBModel.reciepts_detail" Width="1.5" PointX="3" PointY="10.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="BestShoesDBModel.sale_bill" Width="1.5" PointX="3" PointY="14.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="BestShoesDBModel.sale_bill_detail" Width="1.5" PointX="5.25" PointY="16" IsExpanded="true" />
+        <EntityTypeShape EntityType="BestShoesDBModel.special_customer" Width="1.5" PointX="3" PointY="17.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="BestShoesDBModel.stock" Width="1.5" PointX="5.25" PointY="3.75" IsExpanded="true" />
+        <AssociationConnector Association="BestShoesDBModel.FK__pending_amounts__20C1E124" ManuallyRouted="false" />
+        <AssociationConnector Association="BestShoesDBModel.FK__sale_bill_detail__1A14E395" ManuallyRouted="false" />
+        <AssociationConnector Association="BestShoesDBModel.FK__stock__35BCFE0A" ManuallyRouted="false" />
+        <AssociationConnector Association="BestShoesDBModel.FK__pending_a__c_nam__1ED998B2" ManuallyRouted="false" />
+        <AssociationConnector Association="BestShoesDBModel.FK__reciepts___c_nam__0F975522" ManuallyRouted="false" />
+        <AssociationConnector Association="BestShoesDBModel.FK__reciepts__c_name__0AD2A005" ManuallyRouted="false" />
+        <AssociationConnector Association="BestShoesDBModel.FK__sale_bill__custo__145C0A3F" ManuallyRouted="false" />
+        <AssociationConnector Association="BestShoesDBModel.FK__special_c__c_nam__68487DD7" ManuallyRouted="false" />
+        <AssociationConnector Association="BestShoesDBModel.FK__pending_a__invoi__1FCDBCEB" ManuallyRouted="false" />
+        <AssociationConnector Association="BestShoesDBModel.FK__sale_bill__invoi__1920BF5C" ManuallyRouted="false" />
+        <EntityTypeShape EntityType="BestShoesDBModel.sale_return_bill" Width="1.5" PointX="8.25" PointY="11.5" />
+        <EntityTypeShape EntityType="BestShoesDBModel.sale_return_bill_detail" Width="1.5" PointX="10.5" PointY="7.375" />
+        <AssociationConnector Association="BestShoesDBModel.FK__sale_return_bill__73BA3083" />
+        <AssociationConnector Association="BestShoesDBModel.FK__sale_retu__custo__6E01572D" />
+        <AssociationConnector Association="BestShoesDBModel.FK__sale_retu__invoi__6D0D32F4" />
+        <AssociationConnector Association="BestShoesDBModel.FK__sale_retu__invoi__72C60C4A" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>
